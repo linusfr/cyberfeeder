@@ -1,0 +1,121 @@
+{
+  "faction": "Weyland Consortium",
+  "format": {
+    "standard": {
+      "legal": true
+    },
+    "throwback": {
+      "legal": true
+    },
+    "system-gateway": {
+      "rotated": true
+    },
+    "core": {
+      "rotated": true
+    },
+    "startup": {
+      "rotated": true
+    },
+    "eternal": {
+      "legal": true
+    }
+  },
+  "rotated": false,
+  "cycle_code": "liberation",
+  "setname": "Rebellion Without Rehearsal",
+  "agendapoints": 3,
+  "number": 123,
+  "advancementcost": 5,
+  "images": {
+    "fr": {
+      "high": {
+        "stock": [
+          "/img/cards/fr/high/stock/34123.png"
+        ]
+      },
+      "default": {
+        "stock": [
+          "/img/cards/fr/default/stock/34123.png"
+        ]
+      }
+    },
+    "en": {
+      "high": {
+        "lfelimus": [
+          "/img/cards/en/high/lfelimus/34123.png"
+        ],
+        "stock": [
+          "/img/cards/en/high/stock/34123.png"
+        ]
+      },
+      "default": {
+        "lfelimus": [
+          "/img/cards/en/default/lfelimus/34123.png"
+        ],
+        "stock": [
+          "/img/cards/en/default/stock/34123.png"
+        ]
+      }
+    },
+    "de": {
+      "high": {
+        "stock": [
+          "/img/cards/de/high/stock/34123.png"
+        ]
+      },
+      "default": {
+        "stock": [
+          "/img/cards/de/default/stock/34123.png"
+        ]
+      }
+    },
+    "zh-trad": {
+      "high": {
+        "stock": [
+          "/img/cards/zh-trad/high/stock/34123.png"
+        ]
+      },
+      "default": {
+        "stock": [
+          "/img/cards/zh-trad/default/stock/34123.png"
+        ]
+      }
+    },
+    "ca": {
+      "high": {
+        "stock": [
+          "/img/cards/ca/high/stock/34123.png"
+        ]
+      },
+      "default": {
+        "stock": [
+          "/img/cards/ca/default/stock/34123.png"
+        ]
+      }
+    },
+    "it": {
+      "high": {
+        "stock": [
+          "/img/cards/it/high/stock/34123.png"
+        ]
+      },
+      "default": {
+        "stock": [
+          "/img/cards/it/default/stock/34123.png"
+        ]
+      }
+    }
+  },
+  "type": "Agenda",
+  "title": "The Basalt Spire",
+  "uniqueness": false,
+  "normalizedtitle": "the-basalt-spire",
+  "code": "34123",
+  "side": "Corp",
+  "quantity": 3,
+  "deck-limit": 3,
+  "implementation": "full",
+  "set_code": "rwr",
+  "text": "When the Runner steals this agenda, you may add 1 card from Archives to HQ.\nWhen you score this agenda, place 2 agenda counters on it.\nOnce per turn → <strong> Hosted agenda counter</strong>, <strong>trash the top card of R&D:</strong> Add 1 card from Archives to HQ.",
+  "subtypes": []
+}

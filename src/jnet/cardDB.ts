@@ -28,7 +28,6 @@ interface JNetDatabase {
 
 interface CyberfeederDatabase {
   cards: {[key: string]: CardType};
-  version: number;
 }
 
 export async function load() {
@@ -37,17 +36,15 @@ export async function load() {
     return;
   }
   const jnetDB = getJnetDatabase();
-  const cfDB = await getCachedDatabase();
-  if (!jnetDB && cfDB) {
-    debug.warn('[card] Could not find jnet card database, using existing one');
-    cached = cfDB;
+  if (jnetDB) {
+    cached = deriveCyberfeederDB(jnetDB);
+    debug.log('[card] loaded localstorage based database');
     return;
   }
-  if ((jnetDB && !cfDB) || (jnetDB && cfDB && cfDB.version > jnetDB.version)) {
-    const db = await deriveCyberfeederDB(jnetDB);
-    await browser.storage.local.set({items: {cardsByNames: db}});
-    cached = db;
-    debug.log('[card] loaded new card database');
+  const httpDB = await getJnetHttpDatabase();
+  if (httpDB) {
+    cached = deriveCyberfeederDB(httpDB);
+    debug.log('[card] loaded HTTP based database');
     return;
   }
   debug.warn('[card] card db failed to load');
@@ -61,21 +58,6 @@ export function query(name: string): CardType | null {
   return cached.cards[name];
 }
 
-async function getCachedDatabase() {
-  const db = await browser.storage.local
-    .get('cardsByNames')
-    .then(item => {
-      const db = item.cardsByNames as CyberfeederDatabase;
-      if (!db) {
-        debug.log('[card] there is no cached card db');
-        return;
-      }
-      return db;
-    })
-    .catch(err => debug.log('[cards]', err));
-  return db;
-}
-
 function getJnetDatabase() {
   const textData = localStorage.getItem('cards');
   if (!textData) {
@@ -85,11 +67,32 @@ function getJnetDatabase() {
   return JSON.parse(textData) as JNetDatabase;
 }
 
+async function getJnetHttpDatabase() {
+  try {
+    const response = await fetch(`https://${location.hostname}/data/cards`);
+    const database = await response.json();
+    const sanity = database[1];
+    if (sanity.faction && sanity.title) {
+      return {
+        lang: 'compat',
+        cards: database,
+        version: -1,
+      };
+    } else {
+      debug.warn('[cards] database acquired, but it is suspiciouly small, returning empty list instead');
+      return;
+    }
+  } catch (e) {
+    debug.warn('[card] tried to fetch HTTP card database but it failed');
+    debug.warn(e);
+  }
+  return;
+}
+
 /** convert jnet's index-based db to text key based db */
-async function deriveCyberfeederDB(jnetDB: JNetDatabase) {
+function deriveCyberfeederDB(jnetDB: JNetDatabase) {
   const cyberfeederDB: CyberfeederDatabase = {
     cards: {},
-    version: jnetDB.version,
   };
   for (const card of jnetDB.cards) {
     cyberfeederDB.cards[card.title] = card;
