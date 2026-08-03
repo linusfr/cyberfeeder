@@ -30,7 +30,7 @@
     "toml-json": "^1.1.4",
     "typescript": "^5.2.2",
     "univeil": "^0.1.19",
-    "web-ext": "^8.6.0"
+    "web-ext": "^10.5.0"
   },
   "dependencies": {
     "channel-ts": "^0.1.2"
