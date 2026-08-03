@@ -12,3 +12,4 @@ export * as serverIcons from './serverIcons';
 export * as turnNumber from './turnNumber';
 export * as timer from './timer';
 export * as server from './serverNote';
+export * as slowDraw from './slowDraw';

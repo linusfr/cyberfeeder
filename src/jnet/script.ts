@@ -20,6 +20,7 @@ enum KnownScripts {
   turnNumber = 'Information-none-Show-turn-number',
   timer = 'Reminders-none-Per-player-timer',
   server = 'Information-none-Remember-installed-cards',
+  slowDraw = 'Quality-of-life-none-Prevent-double-click-draw',
 }
 
 export interface Toggle {
@@ -221,6 +222,14 @@ export function setupScripts(toggles: Toggle[]) {
         features.server.enable();
       } else {
         features.server.disable();
+      }
+    }
+    if (toggle.id === KnownScripts.slowDraw) {
+      if (toggle.enabled) {
+        shouldWatchCommand = true;
+        features.slowDraw.enable();
+      } else {
+        features.slowDraw.disable();
       }
     }
   }

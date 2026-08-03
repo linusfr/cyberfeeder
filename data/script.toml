@@ -1,4 +1,4 @@
-version = "15"
+version = "16"
 
 [[style]]
 category = "Mandatory"
@@ -132,6 +132,19 @@ css = """
 
 .icon-remote {
   color: var(--remote-icon);
+}
+"""
+
+[[style]]
+category = "Quality of life"
+series = "none"
+name = "Prevent double click draw"
+default = false
+description = "After clicking 'Draw' button, disable that button for half a second"
+css = """
+.right-inner-leftpane .panel button.cyberfeeder-disabled {
+  pointer-event: none;
+  opacity: 0.7;
 }
 """
 

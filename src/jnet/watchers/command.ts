@@ -14,6 +14,8 @@ export interface CommandPanelClick {
   type: 'click-command-panel';
   age: number;
   text: string;
+  element: Element;
+  key?: string | null;
 }
 
 export const lastClicks: CommandPanelClick[] = [];
@@ -211,21 +213,26 @@ function watchButton(element: Element, age: number) {
   element.setAttribute('cyberfeeder', 'watched');
   const tracker = () => {
     if (element.textContent) {
-      const data: CommandPanelClick = {type: clickEvent, text: element.textContent, age};
+      const key = element.querySelector(':scope > span')?.getAttribute('data-l18n-key');
+      const data: CommandPanelClick = {type: clickEvent, text: element.textContent, age, element, key};
       const event = new CustomEvent<CommandPanelClick>(clickEvent, {detail: data});
       document.dispatchEvent(event);
       while (lastClicks.length > 7) lastClicks.shift();
       lastClicks.push(data);
     }
-    element.removeEventListener('click', tracker);
-    element.removeAttribute('cyberfeeder');
+    if (element.querySelector(':scope > span')?.getAttribute('data-i18n-key') === 'game_draw') {
+      // keep draw button around for detection, it will only be removed after a timeout
+    } else {
+      element.removeEventListener('click', tracker);
+      element.removeAttribute('cyberfeeder');
+    }
   };
   element.addEventListener('click', tracker);
   setTimeout(() => {
-    // clean up the event after 2 minutes
+    // clean up the event after 5 minutes
     element.removeEventListener('click', tracker);
     element.removeAttribute('cyberfeeder');
-  }, 120000);
+  }, 600000);
   return element.textContent;
 }
 
