@@ -67,19 +67,19 @@ const chatPatterns: ChatPattern[] = [
     dispatch: () => watchStartOver(Secret.order),
   },
   {
+    type: Secret.look,
+    patterns: [
+      /looks? at the top(?: \d+)? cards? of (?:the )?(?<location>R&D|stack|Stack)/, // Architect deployment test
+    ],
+    dispatch: age => watchPanel(1, Secret.look, age, 1),
+  },
+  {
     type: Secret.order,
     patterns: [
       /looks? at the top(?: \d+)? cards? of/,
       // /^(?!.*install it).*\b(?:uses? .* to reveal|reveals|then reveals?).*(HQ|R&D|Archives|Server|stack|Stack)\b/,
     ],
     dispatch: (age: number) => watchPanel(1, Secret.order, age, 2),
-  },
-  {
-    type: Secret.look,
-    patterns: [
-      /look at the top(?: \d+)? cards? of (?:the )?(?<location>R&D|stack|Stack)/, // Architect deployment test
-    ],
-    dispatch: age => watchPanel(1, Secret.order, age, 1),
   },
 ];
 
@@ -98,7 +98,11 @@ const panelPatterns: PanelPattern[] = [
   },
   {
     type: Secret.look,
-    patterns: [/(?:top|bottom) (?<number>\d )?cards? of (?:the )?(?<location>stack|R&D) (?:is|are|will be) (?<card>.*)$/, /(?:top|bottom) of (?<location>stack|R&D) is .*$/],
+    patterns: [
+      // single card information, top of bottom
+      /(?:top|bottom) (?<number>\d )?cards? of (?:the )?(?<location>stack|R&D) (?:is|are|will be) (?<card>.*)$/,
+      /(?:top|bottom)(?: card)? of(?: the)? (?<location>Stack|stack|R&D) is(?::)? (?<card>.*)$/,
+    ],
   },
 ];
 
