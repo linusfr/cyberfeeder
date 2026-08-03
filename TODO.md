@@ -1,12 +1,15 @@
 Here are Cyberfeeder feature ideas I have or received so far. If there are particular demands for some of them, I can bump them up.
 
 **Done in last update**
-- Fix Cyberfeeder double-starting in jinteki.net
+- Handle Nuvem top deck peek
+- Fix layout breakage when Jnet native zoom is used
+- Archives point tracking is fixed by using /data/cards to obtain card database
+- Highlight for rooms that deviate from default title format
 
 **Planned for next feature update:**
-- Handle Nuvem top deck peek
 - Search function in config menu
 - Combine style/script tab into one, and add a marker for script feature instead
+- Chrome support
 
 **Considering positively**
 - Recently toggled items collection
@@ -14,13 +17,12 @@ Here are Cyberfeeder feature ideas I have or received so far. If there are parti
 - Add about page
 - Fix clock overflow when clock goes over 12:00
 - Match history (shows how many times you faced this opponent, and how many days ago you met them recently)
-- Highlight for rooms that deviate from default title format
+
 **Requested**
 - Zen mode (hide nonessential information, make them appear when mouse is nearby)
 
 **Nice to have, but I don't need it**
 - Remove download permission and ask when needed
-- Chrome support (it might actually be coming soon, but not from me)
 - Interactive configuration page (Like sidebar menu, but visual. Shows toggles over a mock game board)
 - Mobile support, also means making a configuration tab (since there is no sidebar in mobile)
 - Find out why per-player clock is buggy when spectating and fix it
