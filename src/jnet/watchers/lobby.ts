@@ -39,6 +39,7 @@ export interface Room {
 function roomHandler(mutations: MutationRecord[]) {
   for (const m of mutations) {
     if (m.target.nodeType !== Node.ELEMENT_NODE) continue;
+    search(m.target as Element);
     m.addedNodes.forEach(node => {
       if (node.nodeType !== Node.ELEMENT_NODE) return;
       const element = node as Element;
