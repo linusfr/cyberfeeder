@@ -231,6 +231,24 @@ css = """
 """
 
 [[style]]
+category = "Reminders"
+series = "none"
+name = "Highlight rooms with non-default title"
+default = false
+description = "If there is a lobby with non-default title, it will be highlighted"
+css = """
+.cyberfeeder-room-deviation {
+  background-color: rgba(180, 180, 100, 0.4);
+}
+.cyberfeeder-room-private {
+  background-color: rgba(0, 0, 0, 0.3);
+}
+.cyberfeeder-room-deviation.cyberfeeder-room-private {
+  background-color: rgba(70, 70, 0, 0.3);
+}
+"""
+
+[[style]]
 category = "Information"
 series = "none"
 name = "Remember secret information"

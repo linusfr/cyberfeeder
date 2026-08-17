@@ -13,3 +13,4 @@ export * as turnNumber from './turnNumber';
 export * as timer from './timer';
 export * as server from './serverNote';
 export * as slowDraw from './slowDraw';
+export * as highlightLobby from './lobby';

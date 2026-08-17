@@ -6,3 +6,4 @@ export * as hand from './hand';
 export * as ril from './rightInnerLeftpane';
 export * as clock from './clock';
 export * as board from './board';
+export * as lobby from './lobby';

@@ -21,6 +21,7 @@ enum KnownScripts {
   timer = 'Reminders-none-Per-player-timer',
   server = 'Information-none-Remember-installed-cards',
   slowDraw = 'Quality-of-life-none-Prevent-double-click-draw',
+  lobby = 'Reminders-none-Highlight-rooms-with-non-default-title',
 }
 
 export interface Toggle {
@@ -71,6 +72,7 @@ export function disableAll() {
   watcher.ril.stop();
   watcher.clock.stop();
   watcher.board.stop();
+  watcher.lobby.stop();
   features.sortArchive.disable();
   features.newMessageIndicator.disable();
   features.handsizeReminder.disable();
@@ -85,6 +87,7 @@ export function disableAll() {
   features.turnNumber.disable();
   features.timer.disable();
   features.server.disable();
+  features.highlightLobby.disable();
 }
 
 export function setupScripts(toggles: Toggle[]) {
@@ -95,6 +98,7 @@ export function setupScripts(toggles: Toggle[]) {
   let shouldWatchRIL = false;
   let shouldWatchClock = false;
   let shouldWatchBoard = false;
+  let shouldWatchLobby = false;
 
   for (const toggle of toggles) {
     if (toggle.id === KnownScripts.sortAcrhive) {
@@ -232,6 +236,14 @@ export function setupScripts(toggles: Toggle[]) {
         features.slowDraw.disable();
       }
     }
+    if (toggle.id === KnownScripts.lobby) {
+      if (toggle.enabled) {
+        shouldWatchLobby = true;
+        features.highlightLobby.enable();
+      } else {
+        features.highlightLobby.disable();
+      }
+    }
   }
   if (shouldWatchArchive) watcher.archive.watch();
   if (shouldWatchChat) watcher.chat.watch();
@@ -240,4 +252,5 @@ export function setupScripts(toggles: Toggle[]) {
   if (shouldWatchRIL) watcher.ril.watch();
   if (shouldWatchClock) watcher.clock.watch();
   if (shouldWatchBoard) watcher.board.watch();
+  if (shouldWatchLobby) watcher.lobby.watch();
 }
