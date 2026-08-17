@@ -22,5 +22,5 @@ function temporarilyDisable(e: Element) {
   e.classList.add('cyberfeeder-disabled');
   setTimeout(() => {
     e.classList.remove('cyberfeeder-disabled');
-  }, 500);
+  }, 800);
 }
