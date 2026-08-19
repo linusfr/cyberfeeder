@@ -2,6 +2,9 @@ import {sendIt, saveUserToggles, saveCustom} from './operations';
 import {getStyleUI, rebuildStyle} from './html';
 import {getAndCacheCurrentScriptToggles, getStyles} from './data';
 import * as operations from './operations';
+import {injectAnywhere, reloadScripts} from '../shared/inject';
+import {isChromium} from '../compat';
+import {getActiveTab} from './activeTab';
 import {TabType} from './types';
 
 export async function registerHandlers() {
@@ -18,6 +21,7 @@ export async function registerHandlers() {
   registerRebuildHandler();
   registerResetHandler();
   registerPurgeHandler();
+  registerChromiumOperations();
   await registerMessageHandler();
 }
 
@@ -226,6 +230,45 @@ function registerPurgeHandler() {
     await sendIt('script', '');
     await browser.storage.local.clear();
     browser.runtime.reload();
+  });
+}
+
+/**
+ * Chromium's toolbar button cannot report modifier keys, so the actions that are
+ * Shift-click and Alt-click on Firefox are offered as buttons there instead.
+ * The container stays hidden on Firefox, where those clicks already work.
+ */
+function registerChromiumOperations() {
+  const container = document.getElementById('chromium-only');
+  if (!container || !isChromium) {
+    return;
+  }
+  container.hidden = false;
+
+  const refresh = document.getElementById('settings-refresh');
+  if (refresh) {
+    refresh.addEventListener('click', () => reloadScripts());
+  } else {
+    console.warn("Couldn't find refresh button");
+  }
+
+  const inject = document.getElementById('settings-inject');
+  if (!inject) {
+    console.warn("Couldn't find inject button");
+    return;
+  }
+  inject.addEventListener('click', async () => {
+    const tab = getActiveTab();
+    if (!tab) {
+      console.warn('Could not find the current tab');
+      return;
+    }
+    // Call this without awaiting anything first, so the click's user gesture is
+    // still active when the optional permission is requested.
+    const injected = await injectAnywhere(tab);
+    if (!injected) return;
+    await sendIt('style', rebuildStyle('style'));
+    await sendIt('script', rebuildStyle('script'), await getAndCacheCurrentScriptToggles());
   });
 }
 
