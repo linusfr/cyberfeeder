@@ -1,0 +1,38 @@
+name: release
+
+on:  # yamllint disable-line rule:truthy
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # semantic-release needs full history to find the last tag
+          persist-credentials: false
+
+      - name: Activate Hermit
+        uses: cashapp/activate-hermit@v1
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Bumps package.json and both manifests, writes CHANGELOG.md, tags
+      # v<version>, and attaches both extension zips to the GitHub release.
+      - name: Release
+        run: npx semantic-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

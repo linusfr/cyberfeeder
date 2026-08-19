@@ -46,6 +46,38 @@ Two differences are forced by the platform:
   `tabs` in order to read the current tab's URL when requesting permission for
   a host. The Firefox manifest is unchanged.
 
+# Tooling
+
+Build tools are pinned with [hermit](https://cashapp.github.io/hermit/), so node,
+prek and jq come from `bin/` and CI runs the same versions you do. Activate it
+with `source bin/activate-hermit`. Using hermit is optional for building - any
+node 22 works - but the git hooks and CI assume it.
+
+Hooks are managed with [prek](https://github.com/j178/prek), a drop-in
+pre-commit replacement that hermit installs:
+
+- `prek install --install-hooks` once, then commits get whitespace/JSON checks,
+  a conventional-commit subject check and `gts lint`, and pushes get a build of
+  both targets.
+- `prek run --all-files` to run everything on demand.
+
+# Releases
+
+Releases are cut by [semantic-release](https://semantic-release.gitbook.io/) from
+the commit history, on every push to `main`. It bumps `package.json` and both
+manifests, writes `CHANGELOG.md`, tags `v<version>` and attaches
+`extension.zip` and `extension-chromium.zip` to the GitHub release.
+
+Which commit types trigger what:
+
+- `feat:` -> minor, `fix:` and `perf:` -> patch, `feat!:` (or a
+  `BREAKING CHANGE:` footer) -> major.
+- `chore(deps):` and `dev(deps):` -> patch, so dependency bumps ship.
+- `doc:`, `dev:`, `chore:`, `ci:`, `style:`, `test:`, `refactor:` -> no release.
+
+Both stores are still submitted by hand: download the zip from the release and
+upload it to addons.mozilla.org or the Chrome Web Store.
+
 # Used versions (for Mozilla reviewer)
 - Fedora Spin Sway (version 42)
 - npm 10.9.3

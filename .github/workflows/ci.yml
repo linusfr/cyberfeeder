@@ -1,0 +1,45 @@
+name: ci
+
+on:  # yamllint disable-line rule:truthy
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Provides node, prek and jq, pinned in bin/ - no separate setup-node or
+      # tool installs to keep in sync with what contributors run locally.
+      - name: Activate Hermit
+        uses: cashapp/activate-hermit@v1
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run prek hooks
+        run: prek run --all-files --show-diff-on-failure
+
+      # prek only runs the pre-commit stage above, and the build is what catches
+      # a change that compiles for one engine but not the other.
+      - name: Build firefox target
+        run: npm run build
+
+      - name: Package firefox target
+        run: npm run package
+
+      - name: Build chromium target
+        run: npm run build:chromium
+
+      - name: Package chromium target
+        run: npm run package:chromium
+
+      - name: Upload extension zips
+        uses: actions/upload-artifact@v4
+        with:
+          name: cyberfeeder-zips
+          path: build/*.zip
+          if-no-files-found: error
