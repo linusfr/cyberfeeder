@@ -8,7 +8,7 @@
     "outDir": "build",
     "sourceMap": false,
     "skipLibCheck": true,
-    "types": ["firefox-webext-browser"],
+    "types": ["firefox-webext-browser", "chrome"],
     "lib": ["es2021", "DOM", "ES2021.String"],
     "declaration": false
   },

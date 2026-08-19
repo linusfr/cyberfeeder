@@ -4,6 +4,8 @@ _*.ts
 /app/css
 /app/data
 /app/js
+/app/manifest.json
 /build
 /node_modules
 /tmp
+.DS_STORE

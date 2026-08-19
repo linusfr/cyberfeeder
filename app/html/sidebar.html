@@ -25,6 +25,12 @@
           <input type="button" id="settings-reset" value="Temporarily clear" title="Reset currently applied styles and purge cached CSS (does not purge storage)">
           <p class="desc">Temporarily clear all styles set by Cyberfeeder. Your styles will be rebuilt when re-opening the sidebar or when you toggle new options.</p>
           <p><input type="button" id="backup" value="Download current settings" title="Download all stored data"></p>
+          <div id="chromium-only" hidden>
+            <input type="button" id="settings-refresh" value="Reload script features" title="Rebuild script features in the current tab">
+            <p class="desc">Reload script features in the current tab, without reloading the page. On Firefox this is Shift-click on the toolbar icon.</p>
+            <input type="button" id="settings-inject" value="Inject into this site" title="Run Cyberfeeder on the site in the current tab">
+            <p class="desc">Run Cyberfeeder on a Netrunner instance outside of jinteki.net. Asks for permission on the current site, then injects. Reloading the page clears the session. On Firefox this is Alt-click on the toolbar icon.</p>
+          </div>
           <h3>Current style</h3>
           <textarea id="currentStyle" disabled></textarea>
           <textarea id="currentScriptStyle" disabled></textarea>

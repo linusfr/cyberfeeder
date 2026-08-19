@@ -2,12 +2,23 @@
 
 set -e
 
+# Which browser engine to build for. Firefox is the default, so `npm run build`
+# behaves exactly as before; `npm run build:chromium` builds the MV3 variant.
+TARGET="${TARGET:-firefox}"
+if [ "$TARGET" != "firefox" ] && [ "$TARGET" != "chromium" ]; then
+    echo "unknown TARGET '$TARGET', expected 'firefox' or 'chromium'" >&2
+    exit 1
+fi
+echo "Building Cyberfeeder for $TARGET"
+
 npm run lint
 npm run clean
 mkdir -p "./app/js"
 for CONFIG_FILE in "./rollup"/*.js; do
-    rollup --config $CONFIG_FILE --bundleConfigAsCjs
+    TARGET="$TARGET" rollup --config $CONFIG_FILE --bundleConfigAsCjs
 done
+
+cp "./manifests/$TARGET.json" "./app/manifest.json"
 
 # dnf install sass
 rm -rf "./app/css/*"

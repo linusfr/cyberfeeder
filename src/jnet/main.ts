@@ -1,3 +1,4 @@
+import '../compat';
 import * as css from './css';
 import * as script from './script';
 import * as fontawesome from './fontawesome';

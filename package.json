@@ -6,10 +6,13 @@
     "lint": "gts lint",
     "clean": "gts clean && rm -rf app/js/*",
     "build": "sh scripts/build.sh",
+    "build:chromium": "TARGET=chromium sh scripts/build.sh",
     "fix": "gts fix",
     "package": "sh scripts/package.sh",
+    "package:chromium": "TARGET=chromium sh scripts/package.sh",
     "postversion": "sh scripts/version.sh",
-    "start": "web-ext run --verbose --source-dir ./app"
+    "start": "web-ext run --verbose --source-dir ./app",
+    "start:chromium": "web-ext run --verbose --target chromium --source-dir ./app"
   },
   "author": "Rhahi",
   "license": "MIT",
@@ -20,6 +23,7 @@
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-typescript": "^11.1.5",
+    "@types/chrome": "^0.2.6",
     "@types/firefox-webext-browser": "^111.0.2",
     "@types/node": "20.4.6",
     "gts": "^5.0.1",
