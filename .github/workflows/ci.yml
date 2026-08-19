@@ -1,0 +1,86 @@
+name: ci
+
+on:  # yamllint disable-line rule:truthy
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Provides node, prek and jq, pinned in bin/ - no separate setup-node or
+      # tool installs to keep in sync with what contributors run locally.
+      - name: Activate Hermit
+        uses: cashapp/activate-hermit@v1
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run prek hooks
+        run: prek run --all-files --show-diff-on-failure
+
+      # prek only runs the pre-commit stage above, and the build is what catches
+      # a change that compiles for one engine but not the other.
+      - name: Build firefox target
+        run: npm run build
+
+      # Packaged only on pull requests, where an installable build lets a
+      # reviewer load the extension without a local toolchain. On main the
+      # release job attaches the same zips to the release. Each target is
+      # zipped straight after its build, as app/ holds one at a time.
+      - name: Package firefox target
+        if: github.event_name == 'pull_request'
+        run: npm run package
+
+      - name: Build chromium target
+        run: npm run build:chromium
+
+      - name: Package chromium target
+        if: github.event_name == 'pull_request'
+        run: npm run package:chromium
+
+      - name: Upload extension zips
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: cyberfeeder-zips
+          path: build/*.zip
+          if-no-files-found: error
+          retention-days: 14
+
+  # Same workflow rather than its own file, so a release can never be cut from a
+  # commit whose lint or build failed.
+  release:
+    needs: checks
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+    concurrency:
+      group: release
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # semantic-release needs full history and tags
+          persist-credentials: false
+
+      - name: Activate Hermit
+        uses: cashapp/activate-hermit@v1
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Bumps package.json and both manifests, writes CHANGELOG.md, tags
+      # v<version>, and attaches both extension zips to the GitHub release.
+      - name: Release
+        run: npx semantic-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
