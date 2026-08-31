@@ -57,7 +57,9 @@ jobs:
   # commit whose lint or build failed.
   release:
     needs: checks
-    if: github.event_name != 'pull_request'
+    # Manual dispatch is reserved for read-only diagnostics below. Releases are
+    # created only by pushes to main.
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     # contents only: the github plugin's issue/PR comments and labels are
     # turned off in .releaserc.json, so nothing outside the repo tree is written.
@@ -96,3 +98,37 @@ jobs:
             semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # Verify OIDC, service-account access, and store identifiers without uploading
+  # or submitting a package. Run manually from the Actions tab on main.
+  chrome-store-smoke:
+    needs: checks
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    environment: chrome-web-store
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - id: google_auth
+        name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v3
+        with:
+          workload_identity_provider: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ vars.GCP_SERVICE_ACCOUNT }}
+          token_format: access_token
+          access_token_scopes: https://www.googleapis.com/auth/chromewebstore
+          create_credentials_file: false
+          export_environment_variables: false
+
+      - name: Fetch Chrome Web Store status
+        env:
+          ACCESS_TOKEN: ${{ steps.google_auth.outputs.access_token }}
+          PUBLISHER_ID: ${{ vars.CHROME_WEB_STORE_PUBLISHER_ID }}
+          EXTENSION_ID: ${{ vars.CHROME_WEB_STORE_EXTENSION_ID }}
+        run: |
+          response="$(curl --silent --show-error --fail-with-body \
+            --header "Authorization: Bearer $ACCESS_TOKEN" \
+            "https://chromewebstore.googleapis.com/v2/publishers/$PUBLISHER_ID/items/$EXTENSION_ID:fetchStatus")"
+          jq -e --arg item "$EXTENSION_ID" '.itemId == $item' <<<"$response" >/dev/null
+          jq '{itemId, takenDown, warned, publishedState: .publishedItemRevisionStatus.state, submittedState: .submittedItemRevisionStatus.state}' <<<"$response"
